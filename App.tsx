@@ -1,118 +1,53 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React from 'react';
-import type {PropsWithChildren} from 'react';
+import { useState } from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
+  TouchableOpacity,
+  Image
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+function ChooseDrink() {
+    const [drinkId, setDrinkId] = useState(0);
+    if (drinkId === 0) {
+        AsyncStorage.getItem("drinkId").then( (drinkId)=>{
+            if (drinkId) {
+                setDrinkId(+drinkId);
+            } else {
+                AsyncStorage.setItem("drinkId", "1");
+                setDrinkId(1);
+            }
+        } )
+    }
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
+    const newId = (id) => {AsyncStorage.setItem("drinkId", "" + id); setDrinkId(id);}
+
+    return <View style={styles.view}>
+    <Text>В прошлый раз пил...</Text>
+    <TouchableOpacity onPress={ () => {newId(1)} } activeOpacity={0.7}>
+        <Image source={require('./images/coke.jpg')} style={[styles.pic, {borderColor: drinkId === 1 ? "#E61D2B" : "transparent" }]}/>
+    </TouchableOpacity>
+
+    <TouchableOpacity onPress={ () => {newId(2)} } activeOpacity={0.7}>
+        <Image source={require('./images/sprite.png')} style={[styles.pic, {borderColor: drinkId === 2 ? "#008B47" : "transparent" }]}/>
+    </TouchableOpacity>
+    <TouchableOpacity onPress={ () => {newId(3)} } activeOpacity={0.7}>
+        <Image source={require('./images/fanta.webp')} style={[styles.pic, {borderColor: drinkId === 3 ? "#F7941E" : "transparent" }]}/>
+    </TouchableOpacity>
+    <TouchableOpacity onPress={ () => {newId(4)} } activeOpacity={0.7}>
+        <Image source={require('./images/empty.webp')} style={[styles.pic, {borderColor: drinkId === 4 ? "black" : "transparent" }]}/>
+    </TouchableOpacity>
     </View>
-  );
-}
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
 }
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
+    view: {backgroundColor: 'white', height: 1000, flex: 1, alignItems: "center", justifyContent: "center", gap: 20},
+    pic: {
+        width: 150, height: 150, resizeMode: 'contain', borderWidth: 2, borderRadius: 16
+    }
 });
 
-export default App;
+export default ChooseDrink;
